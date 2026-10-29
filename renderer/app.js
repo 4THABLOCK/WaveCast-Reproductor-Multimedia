@@ -45,7 +45,7 @@ const skipSvg = (dir, n) => dir < 0
 $$('[data-icon]').forEach((el) => { el.innerHTML = svg(el.dataset.icon); });
 
 // ── Ajustes y datos guardados ────────────────────────────────────────────────
-const DEFAULTS = { theme: 'dark', accent: '#7c5cff', style: 'bars', scale: 'real', view: 'wave', normalize: false, volume: 0.8, repeat: 'off', shuffle: false, onTop: false, skip: 10, fx: 'liquid', showLufs: true };
+const DEFAULTS = { theme: 'dark', accent: '#7c5cff', style: 'bars', scale: 'real', view: 'wave', normalize: false, volume: 0.8, repeat: 'off', shuffle: false, onTop: false, skip: 10, fx: 'liquid', showLufs: true, sinkId: '', sinkLabel: '' };
 const ACCENTS = ['#7c5cff', '#38bdf8', '#2dd4bf', '#a3e635', '#fbbf24', '#fb923c', '#fb7185', '#f472b6'];
 const OVERLAY = { dark: { color: '#0f1115', symbolColor: '#e8eaf0' }, midnight: { color: '#000000', symbolColor: '#e8eaf0' }, light: { color: '#f4f5f8', symbolColor: '#1b1e27' } };
 const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch { return d; } };
@@ -150,6 +150,61 @@ async function ensureContext(sampleRate) {
   S.analyser.fftSize = 2048; S.analyser.smoothingTimeConstant = 0.8;
   S.src = null;
   applyVolume(); applyNormalization();
+  sinkApplied = null;
+  await applySink(true);
+}
+
+// ── Salida de audio (se recuerda entre sesiones) ─────────────────────────────
+let sinkApplied = null;
+async function applySink(notify) {
+  if (!S.ctx || typeof S.ctx.setSinkId !== 'function') return false;
+  const want = cfg.sinkId || '';
+  try { await S.ctx.setSinkId(want); sinkApplied = want; return true; }
+  catch (err) {
+    console.warn('No se pudo usar la salida guardada:', err && err.message);
+    sinkApplied = '';
+    if (want && notify) toast('No encontré la salida guardada; uso la predeterminada');
+    return false;
+  }
+}
+async function listSinks() {
+  try {
+    const all = await navigator.mediaDevices.enumerateDevices();
+    return all.filter((d) => d.kind === 'audiooutput' && d.deviceId !== 'default' && d.deviceId !== 'communications');
+  } catch { return []; }
+}
+async function renderSinks() {
+  const sel = $('#sink'), devs = await listSinks();
+  // Si el id cambió pero el nombre es el mismo, recupera la elección.
+  if (cfg.sinkId && cfg.sinkLabel && !devs.some((d) => d.deviceId === cfg.sinkId)) {
+    const m = devs.find((d) => d.label && d.label === cfg.sinkLabel);
+    if (m) { cfg.sinkId = m.deviceId; saveCfg(); }
+  }
+  sel.textContent = '';
+  const add = (v, t) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.appendChild(o); };
+  add('', 'Predeterminada del sistema');
+  devs.forEach((d, i) => add(d.deviceId, d.label || `Salida ${i + 1}`));
+  if (cfg.sinkId && !devs.some((d) => d.deviceId === cfg.sinkId)) add(cfg.sinkId, `${cfg.sinkLabel || 'Salida guardada'} (no disponible)`);
+  sel.value = cfg.sinkId || '';
+  $('#sink-names').hidden = !devs.length || devs.every((d) => d.label);
+}
+$('#sink').onchange = async (e) => {
+  const sel = e.target;
+  cfg.sinkId = sel.value; cfg.sinkLabel = sel.value ? sel.selectedOptions[0].textContent.replace(/ \(no disponible\)$/, '') : '';
+  saveCfg();
+  const ok = await applySink(true);
+  if (ok) toast(cfg.sinkId ? `Salida: ${cfg.sinkLabel}` : 'Salida: predeterminada del sistema');
+};
+$('#sink-names').onclick = async () => {
+  try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach((t) => t.stop()); }
+  catch { toast('No se pudieron leer los nombres (permiso de micrófono denegado)'); }
+  renderSinks();
+};
+if (navigator.mediaDevices) {
+  navigator.mediaDevices.addEventListener('devicechange', async () => {
+    await renderSinks();
+    if (S.ctx && cfg.sinkId && sinkApplied !== cfg.sinkId) applySink(false);   // volvió el dispositivo guardado
+  });
 }
 
 const volCurve = (v) => v * v;
@@ -701,7 +756,7 @@ function buildSettings() {
   $('#skip-minus').onclick = () => stepSkip(-1); $('#skip-plus').onclick = () => stepSkip(1);
 }
 const panel = $('#settings');
-$('#btn-settings').onclick = (e) => { e.stopPropagation(); panel.hidden = !panel.hidden; };
+$('#btn-settings').onclick = (e) => { e.stopPropagation(); panel.hidden = !panel.hidden; if (!panel.hidden) renderSinks(); };
 document.addEventListener('pointerdown', (e) => { if (!panel.hidden && !panel.contains(e.target) && !e.target.closest('#btn-settings')) panel.hidden = true; });
 
 // ── Pantalla completa con efectos ────────────────────────────────────────────
@@ -834,7 +889,7 @@ api.onOpenFile((p) => { S.queue = []; saveQueue(); startTrack(p); closeHome(); }
 api.onMenuOpen(dlgOpenOne);
 
 // ── Inicio ───────────────────────────────────────────────────────────────────
-buildSettings(); buildFxButtons();
+buildSettings(); buildFxButtons(); renderSinks();
 applyTheme(); applyVolume(); renderModes(); renderSkip(); renderLoudness(); updatePlayIcons();
 if (cfg.onTop) api.setAlwaysOnTop(true);
 api.initialFile().then((p) => { if (p) startTrack(p); });

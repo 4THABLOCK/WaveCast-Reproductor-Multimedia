@@ -181,6 +181,11 @@ ipcMain.on('win:overlay', (_e, o) => {
 });
 
 app.whenReady().then(() => {
+  // La app es local y no carga contenido externo. Solo se permite 'media' (para ver los nombres
+  // de las salidas de audio cuando el usuario lo pide); todo lo demás se niega.
+  const ses = require('electron').session.defaultSession;
+  ses.setPermissionRequestHandler((_wc, permission, cb) => cb(permission === 'media'));
+  ses.setPermissionCheckHandler((_wc, permission) => permission === 'media');
   buildMenu();
   createWindow();
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });

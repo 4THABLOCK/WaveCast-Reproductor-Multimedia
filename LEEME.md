@@ -6,13 +6,13 @@ Reproductor limpio para WAV, MP3 (y FLAC, OGG, M4A, AAC, Opus) con forma de onda
 - **Reproductor**: onda (o solo barra de progreso), saltos de ±N segundos (configurable), aleatorio, repetir, clic en la duración para ver el tiempo restante. El LUFS y el interruptor de normalización están discretos al pie.
 - **Home** (icono de casa): historial con buscador, cola de reproducción (arrastra para reordenar), favoritos, abrir archivos/carpeta.
 - **Pantalla completa** (icono de expandir o `F`): 7 efectos que reaccionan a la música (Líquido, Aurora, Túnel, Orbes, Círculo, Partículas, Barras). Teclas `1`–`7` o `E` para cambiar.
-- **Personalizable**: tema, color, forma de onda, vista Onda/Barra, salto, siempre encima.
+- **Personalizable**: tema, color, forma de onda, vista Onda/Barra, salto, siempre encima y **salida de audio** (se recuerda; útil con SteelSeries Sonar o varios dispositivos).
 
 ## Atajos
 `Espacio` reproducir · `←` `→` saltar (con `Shift` ×3) · `↑` `↓` volumen · `M` silenciar · `R` repetir · `S` aleatorio · `N` normalizar · `F` pantalla completa · `H` home · `PgDn`/`PgUp` siguiente/anterior · `Ctrl/⌘+O` abrir
 
 ## Obtener los ejecutables
-En GitHub: sube esta carpeta → *Actions* → *Construir Wave Cast* → *Run workflow*. Descargas `WaveCast-Instalador-1.1.0.exe`, `WaveCast-Portable-1.1.0.exe` (Windows) y `WaveCast-1.1.0-mac.dmg` (Mac).
+En GitHub: sube esta carpeta → *Actions* → *Construir Wave Cast* → *Run workflow*. Descargas `WaveCast-Instalador-1.1.1.exe`, `WaveCast-Portable-1.1.1.exe` (Windows) y `WaveCast-1.1.1-mac.dmg` (Mac).
 O en tu equipo, con Node.js: `Construir-Windows.bat` / `Construir-Mac.command`.
 
 ## Predeterminado para .wav y .mp3

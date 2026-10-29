@@ -1,7 +1,7 @@
 {
   "name": "wavecast",
   "productName": "Wave Cast",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Reproductor de audio limpio y personalizable con forma de onda, LUFS y visuales inmersivos",
   "author": "Wave Cast",
   "license": "MIT",
