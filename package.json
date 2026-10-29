@@ -1,9 +1,9 @@
 {
-  "name": "onda",
-  "productName": "Onda",
-  "version": "1.0.0",
-  "description": "Reproductor de audio limpio y personalizable con forma de onda y medición LUFS",
-  "author": "Onda",
+  "name": "wavecast",
+  "productName": "Wave Cast",
+  "version": "1.1.0",
+  "description": "Reproductor de audio limpio y personalizable con forma de onda, LUFS y visuales inmersivos",
+  "author": "Wave Cast",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
@@ -17,9 +17,9 @@
     "electron-builder": "^26.0.0"
   },
   "build": {
-    "appId": "com.onda.player",
-    "productName": "Onda",
-    "copyright": "Onda",
+    "appId": "com.wavecast.player",
+    "productName": "Wave Cast",
+    "copyright": "Wave Cast",
     "directories": { "output": "dist", "buildResources": "build" },
     "files": ["main.js", "preload.js", "renderer/**/*", "package.json"],
     "fileAssociations": [
@@ -43,10 +43,10 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false,
-      "artifactName": "Onda-Instalador-${version}.${ext}"
+      "artifactName": "WaveCast-Instalador-${version}.${ext}"
     },
     "portable": {
-      "artifactName": "Onda-Portable-${version}.${ext}"
+      "artifactName": "WaveCast-Portable-${version}.${ext}"
     },
     "mac": {
       "target": ["dmg", "zip"],
@@ -56,8 +56,8 @@
       "hardenedRuntime": false
     },
     "dmg": {
-      "artifactName": "Onda-${version}-mac.${ext}",
-      "title": "Onda"
+      "artifactName": "WaveCast-${version}-mac.${ext}",
+      "title": "Wave Cast"
     }
   }
 }

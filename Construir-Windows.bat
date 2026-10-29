@@ -6,8 +6,7 @@ if errorlevel 1 goto fail
 call npm run dist:win
 if errorlevel 1 goto fail
 echo.
-echo Listo. Abre la carpeta "dist" y ejecuta Onda-Instalador-1.0.0.exe
-echo (o Onda-Portable-1.0.0.exe si no quieres instalar nada).
+echo Listo. En la carpeta "dist" esta WaveCast-Instalador (se instala) y WaveCast-Portable (sin instalar).
 start "" "%~dp0dist"
 pause
 exit /b 0

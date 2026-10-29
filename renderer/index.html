@@ -4,74 +4,102 @@
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; worker-src blob:; media-src 'self' blob: file:">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Onda</title>
+  <title>Wave Cast</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app">
     <header id="topbar">
-      <div id="brand">Onda</div>
+      <div id="brand"><i class="mark"><b></b><b></b><b></b><b></b></i>Wave Cast</div>
       <div id="top-actions">
-        <button class="icon-btn" id="btn-open" title="Abrir archivo (Ctrl/⌘ + O)" aria-label="Abrir archivo">
-          <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
-        </button>
-        <button class="icon-btn" id="btn-settings" title="Personalizar" aria-label="Personalizar">
-          <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
-        </button>
+        <button class="icon-btn" id="btn-home" data-icon="home" title="Inicio: historial y cola" aria-label="Inicio"></button>
+        <button class="icon-btn" id="btn-fs" data-icon="expand" title="Pantalla completa con efectos (F)" aria-label="Pantalla completa"></button>
+        <button class="icon-btn" id="btn-settings" data-icon="sliders" title="Personalizar" aria-label="Personalizar"></button>
       </div>
     </header>
 
-    <section id="stage">
-      <div id="meta">
-        <div id="track-title">Onda</div>
-        <div id="track-info">Reproductor de audio sin compresión</div>
-      </div>
-
-      <div id="wave-wrap">
-        <canvas id="wave"></canvas>
-        <div id="hover-tip" hidden>0:00</div>
-        <div id="wave-empty">
-          <div class="empty-title">Suelta aquí un archivo de audio</div>
+    <!-- Reproductor -->
+    <section id="player">
+      <div id="empty">
+        <i class="mark big"><b></b><b></b><b></b><b></b><b></b></i>
+        <div class="empty-title">Suelta aquí un archivo de audio</div>
+        <div class="empty-actions">
           <button class="chip-btn" id="btn-open-big">Abrir archivo</button>
+          <button class="chip-btn ghost" id="btn-open-home">Historial</button>
         </div>
       </div>
 
-      <div id="times"><span id="t-cur">0:00</span><span id="t-dur">0:00</span></div>
-
-      <div id="controls">
-        <button id="btn-norm" class="norm" role="switch" aria-checked="false" title="Normalizar a −14 LUFS (Spotify / YouTube). Solo cambia el volumen, no comprime.">
-          <span class="norm-text">
-            <span class="norm-top"><b id="lufs-val">—</b> <i>LUFS</i></span>
-            <span class="norm-sub" id="norm-sub">Normalizar −14</span>
-          </span>
-          <span class="switch"><span class="knob"></span></span>
-        </button>
-
-        <div id="transport">
-          <button class="icon-btn" id="btn-prev" title="Anterior" aria-label="Anterior">
-            <svg viewBox="0 0 24 24"><path d="M6 5v14M19 6v12l-9-6z" class="fill"/></svg>
-          </button>
-          <button id="btn-play" title="Reproducir / pausar (Espacio)" aria-label="Reproducir">
-            <svg id="ico-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" class="fill"/></svg>
-            <svg id="ico-pause" viewBox="0 0 24 24" hidden><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" class="fill"/></svg>
-          </button>
-          <button class="icon-btn" id="btn-next" title="Siguiente" aria-label="Siguiente">
-            <svg viewBox="0 0 24 24"><path d="M18 5v14M5 6v12l9-6z" class="fill"/></svg>
-          </button>
+      <div id="deck">
+        <div id="meta">
+          <div id="track-title"></div>
+          <div id="track-info"></div>
         </div>
 
-        <div id="right-ctl">
-          <button class="icon-btn" id="btn-loop" title="Repetir (L)" aria-label="Repetir">
-            <svg viewBox="0 0 24 24"><path d="M17 3l3 3-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3M20 13v2a3 3 0 0 1-3 3H4"/></svg>
+        <div id="wave-wrap">
+          <canvas id="wave"></canvas>
+          <div id="bar"><div id="bar-track"><i id="bar-fill"></i><b id="bar-thumb"></b></div></div>
+          <div id="hover-tip" hidden>0:00</div>
+        </div>
+
+        <div id="times"><span id="t-cur">0:00</span><button id="t-dur" title="Alternar duración total / tiempo restante">0:00</button></div>
+
+        <div id="controls">
+          <div class="side left">
+            <button class="icon-btn small" id="btn-shuffle" data-icon="shuffle" title="Aleatorio (S)" aria-label="Aleatorio"></button>
+            <button class="icon-btn small" id="btn-repeat" data-icon="repeat" title="Repetir (R)" aria-label="Repetir"></button>
+          </div>
+          <div id="transport">
+            <button class="icon-btn" id="btn-prev" data-icon="prev" title="Anterior" aria-label="Anterior"></button>
+            <button class="icon-btn skip skip-back" id="btn-back" title="Retroceder" aria-label="Retroceder"></button>
+            <button class="play-btn" id="btn-play" data-icon="play" title="Reproducir / pausar (Espacio)" aria-label="Reproducir"></button>
+            <button class="icon-btn skip skip-fwd" id="btn-fwd" title="Adelantar" aria-label="Adelantar"></button>
+            <button class="icon-btn" id="btn-next" data-icon="next" title="Siguiente" aria-label="Siguiente"></button>
+          </div>
+          <div class="side right">
+            <button class="icon-btn small" id="btn-mute" data-icon="volume" title="Silenciar (M)" aria-label="Volumen"></button>
+            <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen">
+          </div>
+        </div>
+
+        <div id="foot">
+          <span id="lufs-readout"><b id="lufs-val">—</b> LUFS</span>
+          <button id="btn-norm" role="switch" aria-checked="false" title="Normalizar a −14 LUFS (Spotify / YouTube)">
+            <span id="norm-sub">Normalizar −14</span><span class="switch"><span class="knob"></span></span>
           </button>
-          <button class="icon-btn" id="btn-mute" title="Silenciar (M)" aria-label="Volumen">
-            <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z" class="fill"/><path id="vol-wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
-          </button>
-          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen">
         </div>
       </div>
     </section>
 
+    <!-- Home: historial, cola, favoritos -->
+    <section id="home" hidden>
+      <div id="home-head">
+        <div class="tabs" id="tabs">
+          <button data-tab="history" class="on">Historial</button>
+          <button data-tab="queue">Cola<span class="count" id="q-count"></span></button>
+          <button data-tab="favs">Favoritos</button>
+        </div>
+        <label id="search"><span data-icon="search"></span><input id="q" type="text" placeholder="Buscar" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div id="home-tools">
+        <button class="tool" id="t-open"><span data-icon="file"></span>Abrir archivos</button>
+        <button class="tool" id="t-folder"><span data-icon="folder"></span>Abrir carpeta</button>
+        <button class="tool" id="t-add"><span data-icon="plus"></span>Añadir a la cola</button>
+        <span class="grow"></span>
+        <button class="tool danger" id="t-clear"><span data-icon="trash"></span><span id="t-clear-label">Borrar historial</span></button>
+      </div>
+      <div id="list" role="list"></div>
+      <div id="mini">
+        <div id="mini-prog"><i></i></div>
+        <button id="mini-info"><span id="mini-title">Nada en reproducción</span><span id="mini-sub"></span></button>
+        <div class="mini-ctl">
+          <button class="icon-btn small" id="mini-prev" data-icon="prev" aria-label="Anterior"></button>
+          <button class="play-btn small" id="mini-play" data-icon="play" aria-label="Reproducir"></button>
+          <button class="icon-btn small" id="mini-next" data-icon="next" aria-label="Siguiente"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ajustes -->
     <div id="settings" hidden>
       <div class="set-row h">
         <div class="set-label">Tema</div>
@@ -84,22 +112,58 @@
         <div class="swatches" id="swatches"></div>
       </div>
       <div class="set-row h">
+        <div class="set-label">Vista</div>
+        <div class="seg" data-key="view">
+          <button data-value="wave">Onda</button><button data-value="bar">Barra</button>
+        </div>
+      </div>
+      <div class="set-row h only-wave">
         <div class="set-label">Forma</div>
         <div class="seg" data-key="style">
           <button data-value="bars">Barras</button><button data-value="smooth">Suave</button><button data-value="lines">Finas</button>
         </div>
       </div>
-      <div class="set-row h">
+      <div class="set-row h only-wave">
         <div class="set-label">Altura</div>
         <div class="seg" data-key="scale">
           <button data-value="real">Real</button><button data-value="fit">Ajustada</button>
         </div>
       </div>
       <div class="set-row inline">
+        <div class="set-label">Saltar</div>
+        <div class="stepper">
+          <button id="skip-minus" aria-label="Menos">−</button><span id="skip-val">10 s</span><button id="skip-plus" aria-label="Más">+</button>
+        </div>
+      </div>
+      <div class="set-row inline">
+        <div class="set-label">Mostrar LUFS</div>
+        <button class="mini-switch" id="sw-lufs" role="switch" aria-checked="true"><span class="knob"></span></button>
+      </div>
+      <div class="set-row inline">
         <div class="set-label">Siempre encima</div>
         <button class="mini-switch" id="sw-top" role="switch" aria-checked="false"><span class="knob"></span></button>
       </div>
-      <p class="hint">Sin compresor ni limitador: el audio suena tal cual. Normalizar solo ajusta el volumen general.</p>
+    </div>
+
+    <!-- Pantalla completa inmersiva -->
+    <div id="immersive" hidden>
+      <canvas id="fxgl"></canvas>
+      <canvas id="fx2d"></canvas>
+      <div id="im-top">
+        <div id="im-title"><b id="im-name"></b><span id="im-info"></span></div>
+        <button class="icon-btn" id="im-close" data-icon="close" title="Salir (Esc)" aria-label="Salir"></button>
+      </div>
+      <div id="im-bottom">
+        <div id="im-fx"></div>
+        <div id="im-prog"><span id="im-cur">0:00</span><div id="im-bar"><i></i></div><button id="im-dur">0:00</button></div>
+        <div id="im-ctl">
+          <button class="icon-btn" id="im-prev" data-icon="prev" aria-label="Anterior"></button>
+          <button class="icon-btn skip skip-back" id="im-back" aria-label="Retroceder"></button>
+          <button class="play-btn" id="im-play" data-icon="play" aria-label="Reproducir"></button>
+          <button class="icon-btn skip skip-fwd" id="im-fwd" aria-label="Adelantar"></button>
+          <button class="icon-btn" id="im-next" data-icon="next" aria-label="Siguiente"></button>
+        </div>
+      </div>
     </div>
 
     <div id="toast" hidden></div>
@@ -107,6 +171,7 @@
   </div>
 
   <script src="lufs.js"></script>
+  <script src="fx.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
