@@ -1,4 +1,4 @@
-name: Construir Onda
+name: Construir Wave Cast
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
       - run: npm run dist:win
       - uses: actions/upload-artifact@v4
         with:
-          name: Onda-Windows
+          name: WaveCast-Windows
           path: |
             dist/*.exe
       - if: startsWith(github.ref, 'refs/tags/')
@@ -41,7 +41,7 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
       - uses: actions/upload-artifact@v4
         with:
-          name: Onda-Mac
+          name: WaveCast-Mac
           path: |
             dist/*.dmg
             dist/*.zip
