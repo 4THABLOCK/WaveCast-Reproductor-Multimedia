@@ -1,0 +1,63 @@
+{
+  "name": "onda",
+  "productName": "Onda",
+  "version": "1.0.0",
+  "description": "Reproductor de audio limpio y personalizable con forma de onda y medición LUFS",
+  "author": "Onda",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/lufs.test.js",
+    "dist:win": "electron-builder --win --publish never",
+    "dist:mac": "electron-builder --mac --universal --publish never"
+  },
+  "devDependencies": {
+    "electron": "^37.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.onda.player",
+    "productName": "Onda",
+    "copyright": "Onda",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "renderer/**/*", "package.json"],
+    "fileAssociations": [
+      {
+        "ext": ["wav", "mp3", "flac", "ogg", "m4a", "aac", "opus"],
+        "name": "Archivo de audio",
+        "description": "Archivo de audio",
+        "role": "Viewer"
+      }
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Onda-Instalador-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Onda-Portable-${version}.${ext}"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "category": "public.app-category.music",
+      "icon": "build/icon.png",
+      "identity": null,
+      "hardenedRuntime": false
+    },
+    "dmg": {
+      "artifactName": "Onda-${version}-mac.${ext}",
+      "title": "Onda"
+    }
+  }
+}
